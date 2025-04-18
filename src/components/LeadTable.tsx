@@ -233,13 +233,18 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => onEditLead(lead)}>
                           <Edit className="mr-2 h-4 w-4" />
-                          <span>Edit Lead</span>
+                          <span>Edit Lead Details</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
+                        <DropdownMenuLabel>Update Status</DropdownMenuLabel>
+                        <DropdownMenuItem>
+                          <Phone className="mr-2 h-4 w-4 text-blue-500" />
+                          <span>Mark as Contacted</span>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Check className="mr-2 h-4 w-4 text-green-600" />
                           <span>Mark as Enrolled</span>
@@ -247,6 +252,16 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
                         <DropdownMenuItem>
                           <X className="mr-2 h-4 w-4 text-gray-500" />
                           <span>Mark as Closed</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>Communication</DropdownMenuLabel>
+                        <DropdownMenuItem>
+                          <Mail className="mr-2 h-4 w-4 text-education-600" />
+                          <span>Send Email</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Phone className="mr-2 h-4 w-4 text-education-600" />
+                          <span>Log Call</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => onDeleteLead(lead.id)} className="text-red-600">

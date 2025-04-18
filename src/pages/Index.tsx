@@ -170,7 +170,7 @@ const Index = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 space-y-6 p-6">
+      <main className="flex-1 space-y-6 p-6 lg:px-8 max-w-[1600px] mx-auto w-full">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Lead Management</h1>
