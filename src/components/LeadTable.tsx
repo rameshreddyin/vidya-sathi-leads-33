@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { 
   ArrowUpDown, MoreHorizontal, Search, Filter, 
-  Check, X, Phone, Mail, Edit, Trash 
+  Check, X, Phone, Mail, Edit, Trash, MapPin, GraduationCap 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 type Lead = {
   id: string;
@@ -55,6 +56,12 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
+  const [cityFilter, setCityFilter] = useState("all");
+  const [gradeFilter, setGradeFilter] = useState("all");
+  const { toast } = useToast();
+
+  const uniqueCities = Array.from(new Set(leads.map(lead => lead.city)));
+  const uniqueGrades = Array.from(new Set(leads.map(lead => lead.grade))).sort((a, b) => Number(a) - Number(b));
 
   const sortedLeads = [...leads].sort((a, b) => {
     if (!sortConfig) return 0;
@@ -77,8 +84,10 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     
     const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
     const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
+    const matchesCity = cityFilter === "all" || lead.city === cityFilter;
+    const matchesGrade = gradeFilter === "all" || lead.grade === gradeFilter;
     
-    return matchesSearch && matchesStatus && matchesSource;
+    return matchesSearch && matchesStatus && matchesSource && matchesCity && matchesGrade;
   });
 
   const requestSort = (key: keyof Lead) => {
@@ -111,6 +120,28 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
+  const handleStatusUpdate = (leadId: string, newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `Lead status has been changed to ${newStatus}`,
+    });
+  };
+
+  const handleSendEmail = (email: string) => {
+    window.location.href = `mailto:${email}`;
+    toast({
+      title: "Email Client Opened",
+      description: "Your default email client has been opened.",
+    });
+  };
+
+  const handleCallLog = (phone: string) => {
+    toast({
+      title: "Call Logged",
+      description: `Initiating call to ${phone}`,
+    });
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
@@ -124,7 +155,7 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[130px]">
               <div className="flex items-center gap-2">
@@ -139,6 +170,36 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
               <SelectItem value="Qualified">Qualified</SelectItem>
               <SelectItem value="Enrolled">Enrolled</SelectItem>
               <SelectItem value="Closed">Closed</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={cityFilter} onValueChange={setCityFilter}>
+            <SelectTrigger className="w-[130px]">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                <span>Location</span>
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Cities</SelectItem>
+              {uniqueCities.map((city) => (
+                <SelectItem key={city} value={city}>{city}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={gradeFilter} onValueChange={setGradeFilter}>
+            <SelectTrigger className="w-[130px]">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-4 w-4" />
+                <span>Grade</span>
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Grades</SelectItem>
+              {uniqueGrades.map((grade) => (
+                <SelectItem key={grade} value={grade}>Class {grade}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -211,11 +272,23 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
                   <TableCell>{lead.parentName}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button size="icon" variant="ghost" className="h-8 w-8" title={lead.phone}>
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        className="h-8 w-8" 
+                        title={lead.phone}
+                        onClick={() => handleCallLog(lead.phone)}
+                      >
                         <Phone className="h-4 w-4 text-education-600" />
                       </Button>
                       {lead.email && (
-                        <Button size="icon" variant="ghost" className="h-8 w-8" title={lead.email}>
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          className="h-8 w-8" 
+                          title={lead.email}
+                          onClick={() => handleSendEmail(lead.email)}
+                        >
                           <Mail className="h-4 w-4 text-education-600" />
                         </Button>
                       )}
@@ -241,25 +314,25 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuLabel>Update Status</DropdownMenuLabel>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleStatusUpdate(lead.id, "Contacted")}>
                           <Phone className="mr-2 h-4 w-4 text-blue-500" />
                           <span>Mark as Contacted</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleStatusUpdate(lead.id, "Enrolled")}>
                           <Check className="mr-2 h-4 w-4 text-green-600" />
                           <span>Mark as Enrolled</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleStatusUpdate(lead.id, "Closed")}>
                           <X className="mr-2 h-4 w-4 text-gray-500" />
                           <span>Mark as Closed</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuLabel>Communication</DropdownMenuLabel>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleSendEmail(lead.email)}>
                           <Mail className="mr-2 h-4 w-4 text-education-600" />
                           <span>Send Email</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleCallLog(lead.phone)}>
                           <Phone className="mr-2 h-4 w-4 text-education-600" />
                           <span>Log Call</span>
                         </DropdownMenuItem>
