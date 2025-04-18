@@ -7,6 +7,8 @@ import { LeadForm } from "@/components/LeadForm";
 import { LeadTable } from "@/components/LeadTable";
 import { Metrics } from "@/components/Metrics";
 import { useToast } from "@/components/ui/use-toast";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 // Sample data for initial demo
 const initialLeads = [
@@ -168,49 +170,51 @@ const Index = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 space-y-6 p-6 lg:px-8 max-w-[1600px] mx-auto w-full">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Lead Management</h1>
-            <p className="text-muted-foreground">Keep track of all prospective admissions</p>
-          </div>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-education-600 hover:bg-education-700">
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Lead
-              </Button>
-            </DialogTrigger>
-            <LeadForm 
-              onSubmit={handleAddLead} 
-              onClose={() => {
-                setOpen(false);
-                setEditingLead(undefined);
-              }}
-              initialData={editingLead}
-            />
-          </Dialog>
-        </div>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <div className="flex-1">
+          <Header />
+          <main className="flex-1 space-y-6 p-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Lead Management</h1>
+                <p className="text-muted-foreground">Keep track of all prospective admissions</p>
+              </div>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add New Lead
+                  </Button>
+                </DialogTrigger>
+                <LeadForm 
+                  onSubmit={handleAddLead} 
+                  onClose={() => {
+                    setOpen(false);
+                    setEditingLead(undefined);
+                  }}
+                  initialData={editingLead}
+                />
+              </Dialog>
+            </div>
 
-        <Metrics leads={leads} />
+            <Metrics leads={leads} />
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight">Student Leads</h2>
-          </div>
-          <LeadTable 
-            leads={leads} 
-            onDeleteLead={handleDeleteLead}
-            onEditLead={handleEditLead}
-          />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold tracking-tight">Student Leads</h2>
+              </div>
+              <LeadTable 
+                leads={leads} 
+                onDeleteLead={handleDeleteLead}
+                onEditLead={handleEditLead}
+              />
+            </div>
+          </main>
         </div>
-      </main>
-      <footer className="border-t py-4 text-center text-sm text-muted-foreground">
-        <p>VidyaSathi Lead Manager - Simplifying school admissions</p>
-      </footer>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
