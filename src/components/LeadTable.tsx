@@ -68,6 +68,14 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [areaFilter, setAreaFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
+
+  const requestSort = (key: keyof Lead) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -207,98 +215,115 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-6 py-6 md:flex-row md:items-center md:justify-between">
         <div className="relative w-full md:w-[300px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search leads..."
-            className="w-full pl-8"
+            className="pl-9 bg-white border-gray-200 hover:border-gray-300 transition-colors"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-2 border rounded-lg p-2">
-            <Button variant="ghost" size="icon" onClick={previousMonth}>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={previousMonth}
+              className="hover:bg-gray-50"
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-sm font-medium">
+            <span className="px-3 text-sm font-medium border-x">
               {format(currentMonth, 'MMMM yyyy')}
             </span>
-            <Button variant="ghost" size="icon" onClick={nextMonth}>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={nextMonth}
+              className="hover:bg-gray-50"
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[130px]">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                <span>Status</span>
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="New">New</SelectItem>
-              <SelectItem value="Contacted">Contacted</SelectItem>
-              <SelectItem value="Qualified">Qualified</SelectItem>
-              <SelectItem value="Enrolled">Enrolled</SelectItem>
-              <SelectItem value="Closed">Closed</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap items-center gap-3">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-gray-500" />
+                  <span>Status</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="New">New</SelectItem>
+                <SelectItem value="Contacted">Contacted</SelectItem>
+                <SelectItem value="Qualified">Qualified</SelectItem>
+                <SelectItem value="Enrolled">Enrolled</SelectItem>
+                <SelectItem value="Closed">Closed</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Select value={areaFilter} onValueChange={setAreaFilter}>
-            <SelectTrigger className="w-[130px]">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>Area</span>
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Areas</SelectItem>
-              {uniqueAreas.map((area) => (
-                <SelectItem key={area} value={area}>{area}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={areaFilter} onValueChange={setAreaFilter}>
+              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-gray-500" />
+                  <span>Area</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectItem value="all">All Areas</SelectItem>
+                {uniqueAreas.map((area) => (
+                  <SelectItem key={area} value={area}>{area}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={gradeFilter} onValueChange={setGradeFilter}>
-            <SelectTrigger className="w-[130px]">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4" />
-                <span>Grade</span>
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Grades</SelectItem>
-              {uniqueGrades.map((grade) => (
-                <SelectItem key={grade} value={grade}>Class {grade}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={gradeFilter} onValueChange={setGradeFilter}>
+              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4 text-gray-500" />
+                  <span>Grade</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectItem value="all">All Grades</SelectItem>
+                {uniqueGrades.map((grade) => (
+                  <SelectItem key={grade} value={grade}>Class {grade}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="w-[130px]">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                <span>Source</span>
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Sources</SelectItem>
-              <SelectItem value="Website">Website</SelectItem>
-              <SelectItem value="WalkIn">Walk-in</SelectItem>
-              <SelectItem value="Referral">Referral</SelectItem>
-              <SelectItem value="SocialMedia">Social Media</SelectItem>
-              <SelectItem value="Advertisement">Advertisement</SelectItem>
-              <SelectItem value="Exhibition">Exhibition</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
-            </SelectContent>
-          </Select>
+            <Select value={sourceFilter} onValueChange={setSourceFilter}>
+              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-gray-500" />
+                  <span>Source</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectItem value="all">All Sources</SelectItem>
+                <SelectItem value="Website">Website</SelectItem>
+                <SelectItem value="WalkIn">Walk-in</SelectItem>
+                <SelectItem value="Referral">Referral</SelectItem>
+                <SelectItem value="SocialMedia">Social Media</SelectItem>
+                <SelectItem value="Advertisement">Advertisement</SelectItem>
+                <SelectItem value="Exhibition">Exhibition</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Button variant="outline" onClick={exportToCSV}>
-            <Download className="h-4 w-4 mr-2" />
+          <Button 
+            variant="outline" 
+            onClick={exportToCSV}
+            className="bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+          >
+            <Download className="h-4 w-4 mr-2 text-gray-500" />
             Export
           </Button>
         </div>
