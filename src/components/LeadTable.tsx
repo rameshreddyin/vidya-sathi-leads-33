@@ -56,11 +56,11 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
-  const [cityFilter, setCityFilter] = useState("all");
+  const [areaFilter, setAreaFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
   const { toast } = useToast();
 
-  const uniqueCities = Array.from(new Set(leads.map(lead => lead.city)));
+  const uniqueAreas = Array.from(new Set(leads.map(lead => lead.area)));
   const uniqueGrades = Array.from(new Set(leads.map(lead => lead.grade))).sort((a, b) => Number(a) - Number(b));
 
   const sortedLeads = [...leads].sort((a, b) => {
@@ -84,10 +84,10 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     
     const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
     const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
-    const matchesCity = cityFilter === "all" || lead.city === cityFilter;
+    const matchesArea = areaFilter === "all" || lead.area === areaFilter;
     const matchesGrade = gradeFilter === "all" || lead.grade === gradeFilter;
     
-    return matchesSearch && matchesStatus && matchesSource && matchesCity && matchesGrade;
+    return matchesSearch && matchesStatus && matchesSource && matchesArea && matchesGrade;
   });
 
   const requestSort = (key: keyof Lead) => {
@@ -173,17 +173,17 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
             </SelectContent>
           </Select>
 
-          <Select value={cityFilter} onValueChange={setCityFilter}>
+          <Select value={areaFilter} onValueChange={setAreaFilter}>
             <SelectTrigger className="w-[130px]">
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                <span>Location</span>
+                <span>Area</span>
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Cities</SelectItem>
-              {uniqueCities.map((city) => (
-                <SelectItem key={city} value={city}>{city}</SelectItem>
+              <SelectItem value="all">All Areas</SelectItem>
+              {uniqueAreas.map((area) => (
+                <SelectItem key={area} value={area}>{area}</SelectItem>
               ))}
             </SelectContent>
           </Select>
