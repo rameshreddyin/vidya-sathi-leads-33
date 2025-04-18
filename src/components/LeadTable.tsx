@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   ArrowUpDown, MoreHorizontal, Search, Filter, 
@@ -37,6 +36,10 @@ type Lead = {
   parentName: string;
   phone: string;
   email: string;
+  address: string;
+  area: string;
+  city: string;
+  pincode: string;
   grade: string;
   date: string;
   status: string;
@@ -173,31 +176,27 @@ export function LeadTable({ leads, onDeleteLead }: { leads: Lead[]; onDeleteLead
                 </div>
               </TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead onClick={() => requestSort('grade')} className="cursor-pointer">
+              <TableHead onClick={() => requestSort('area')} className="cursor-pointer">
                 <div className="flex items-center">
-                  Grade
+                  Area
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </div>
               </TableHead>
-              <TableHead onClick={() => requestSort('date')} className="cursor-pointer">
+              <TableHead onClick={() => requestSort('city')} className="cursor-pointer">
                 <div className="flex items-center">
-                  Date
+                  City
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </div>
               </TableHead>
-              <TableHead onClick={() => requestSort('status')} className="cursor-pointer">
-                <div className="flex items-center">
-                  Status
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </div>
-              </TableHead>
+              <TableHead>Grade</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredLeads.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   No leads found.
                 </TableCell>
               </TableRow>
@@ -218,8 +217,9 @@ export function LeadTable({ leads, onDeleteLead }: { leads: Lead[]; onDeleteLead
                       )}
                     </div>
                   </TableCell>
+                  <TableCell>{lead.area}</TableCell>
+                  <TableCell>{lead.city}</TableCell>
                   <TableCell>Class {lead.grade}</TableCell>
-                  <TableCell>{formatDate(lead.date)}</TableCell>
                   <TableCell>{getStatusBadge(lead.status)}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>

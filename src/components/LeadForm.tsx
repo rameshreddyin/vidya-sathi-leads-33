@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,9 @@ export function LeadForm({ onSubmit, onClose }: { onSubmit: (data: any) => void;
     phone: "",
     email: "",
     address: "",
+    area: "",
+    city: "",
+    pincode: "",
     grade: "",
     source: "",
     notes: ""
@@ -98,6 +100,56 @@ export function LeadForm({ onSubmit, onClose }: { onSubmit: (data: any) => void;
             />
           </div>
 
+          <div className="col-span-2 grid gap-2">
+            <Label htmlFor="address">Street Address *</Label>
+            <Input
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+              placeholder="Enter street address"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="area">Area/Locality *</Label>
+            <Input
+              id="area"
+              name="area"
+              value={formData.area}
+              onChange={handleChange}
+              required
+              placeholder="Enter area or locality"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="city">City *</Label>
+            <Input
+              id="city"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              required
+              placeholder="Enter city name"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="pincode">PIN Code *</Label>
+            <Input
+              id="pincode"
+              name="pincode"
+              value={formData.pincode}
+              onChange={handleChange}
+              required
+              placeholder="Enter PIN code"
+              maxLength={6}
+              pattern="[0-9]*"
+            />
+          </div>
+
           <div className="grid gap-2">
             <Label htmlFor="grade">Interested Grade/Class *</Label>
             <Select name="grade" onValueChange={(value) => handleSelectChange(value, "grade")}>
@@ -140,17 +192,6 @@ export function LeadForm({ onSubmit, onClose }: { onSubmit: (data: any) => void;
                 <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="col-span-2 grid gap-2">
-            <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Enter residential address"
-            />
           </div>
 
           <div className="col-span-2 grid gap-2">
