@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +8,31 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DialogTitle, DialogDescription, DialogHeader, DialogFooter, DialogContent, DialogClose } from "@/components/ui/dialog";
 
-export function LeadForm({ onSubmit, onClose }: { onSubmit: (data: any) => void; onClose: () => void }) {
-  const [formData, setFormData] = useState({
+type Lead = {
+  id?: string;
+  name: string;
+  parentName: string;
+  phone: string;
+  email: string;
+  address: string;
+  area: string;
+  city: string;
+  pincode: string;
+  grade: string;
+  status?: string;
+  source: string;
+  notes: string;
+  date?: string;
+};
+
+interface LeadFormProps {
+  onSubmit: (data: Lead) => void;
+  onClose: () => void;
+  initialData?: Lead;
+}
+
+export function LeadForm({ onSubmit, onClose, initialData }: LeadFormProps) {
+  const [formData, setFormData] = useState<Lead>({
     name: "",
     parentName: "",
     phone: "",
@@ -22,6 +46,12 @@ export function LeadForm({ onSubmit, onClose }: { onSubmit: (data: any) => void;
     notes: ""
   });
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -33,7 +63,12 @@ export function LeadForm({ onSubmit, onClose }: { onSubmit: (data: any) => void;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ ...formData, status: "New", date: new Date().toISOString() });
+    onSubmit({ 
+      ...formData,
+      id: initialData?.id,
+      status: initialData?.status || "New",
+      date: initialData?.date || new Date().toISOString()
+    });
     onClose();
   };
 

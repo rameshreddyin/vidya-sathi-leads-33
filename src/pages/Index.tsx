@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -93,9 +92,26 @@ const initialLeads = [
   }
 ];
 
+type Lead = {
+  id: string;
+  name: string;
+  parentName: string;
+  phone: string;
+  email: string;
+  address: string;
+  area: string;
+  city: string;
+  pincode: string;
+  grade: string;
+  date: string;
+  status: string;
+  source: string;
+};
+
 const Index = () => {
   const [leads, setLeads] = useState(initialLeads);
   const [open, setOpen] = useState(false);
+  const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
   const { toast } = useToast();
 
   // Persist leads to localStorage
@@ -111,15 +127,33 @@ const Index = () => {
   }, [leads]);
 
   const handleAddLead = (data: any) => {
-    const newLead = {
-      ...data,
-      id: `lead-${Date.now()}`
-    };
-    setLeads([newLead, ...leads]);
-    toast({
-      title: "Lead Added",
-      description: `${newLead.name}'s information has been saved.`,
-    });
+    if (editingLead) {
+      // Update existing lead
+      setLeads(leads.map(lead => 
+        lead.id === editingLead.id ? { ...data, id: editingLead.id } : lead
+      ));
+      toast({
+        title: "Lead Updated",
+        description: `${data.name}'s information has been updated.`,
+      });
+      setEditingLead(undefined);
+    } else {
+      // Add new lead
+      const newLead = {
+        ...data,
+        id: `lead-${Date.now()}`
+      };
+      setLeads([newLead, ...leads]);
+      toast({
+        title: "Lead Added",
+        description: `${newLead.name}'s information has been saved.`,
+      });
+    }
+  };
+
+  const handleEditLead = (lead: Lead) => {
+    setEditingLead(lead);
+    setOpen(true);
   };
 
   const handleDeleteLead = (id: string) => {
@@ -148,7 +182,14 @@ const Index = () => {
                 Add New Lead
               </Button>
             </DialogTrigger>
-            <LeadForm onSubmit={handleAddLead} onClose={() => setOpen(false)} />
+            <LeadForm 
+              onSubmit={handleAddLead} 
+              onClose={() => {
+                setOpen(false);
+                setEditingLead(undefined);
+              }}
+              initialData={editingLead}
+            />
           </Dialog>
         </div>
 
@@ -158,7 +199,11 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold tracking-tight">Student Leads</h2>
           </div>
-          <LeadTable leads={leads} onDeleteLead={handleDeleteLead} />
+          <LeadTable 
+            leads={leads} 
+            onDeleteLead={handleDeleteLead}
+            onEditLead={handleEditLead}
+          />
         </div>
       </main>
       <footer className="border-t py-4 text-center text-sm text-muted-foreground">

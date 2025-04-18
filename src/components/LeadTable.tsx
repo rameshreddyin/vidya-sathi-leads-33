@@ -46,7 +46,11 @@ type Lead = {
   source: string;
 };
 
-export function LeadTable({ leads, onDeleteLead }: { leads: Lead[]; onDeleteLead: (id: string) => void }) {
+export function LeadTable({ leads, onDeleteLead, onEditLead }: { 
+  leads: Lead[]; 
+  onDeleteLead: (id: string) => void;
+  onEditLead: (lead: Lead) => void;
+}) {
   const [sortConfig, setSortConfig] = useState<{ key: keyof Lead; direction: 'asc' | 'desc' } | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -231,7 +235,7 @@ export function LeadTable({ leads, onDeleteLead }: { leads: Lead[]; onDeleteLead
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onEditLead(lead)}>
                           <Edit className="mr-2 h-4 w-4" />
                           <span>Edit Lead</span>
                         </DropdownMenuItem>
