@@ -21,7 +21,10 @@ const initialLeads = [
     date: "2023-03-15T10:30:00Z",
     status: "New",
     source: "Website",
-    address: "123 Main St, Delhi",
+    address: "123 Main St",
+    area: "Vasant Kunj",
+    city: "Delhi",
+    pincode: "110070",
     notes: "Interested in school's science program"
   },
   {
@@ -34,7 +37,10 @@ const initialLeads = [
     date: "2023-03-10T14:45:00Z",
     status: "Contacted",
     source: "Referral",
-    address: "456 Oak St, Mumbai",
+    address: "456 Oak St",
+    area: "Bandra",
+    city: "Mumbai",
+    pincode: "400050",
     notes: "Wants to know about extracurricular activities"
   },
   {
@@ -47,7 +53,10 @@ const initialLeads = [
     date: "2023-03-05T09:15:00Z",
     status: "Qualified",
     source: "Exhibition",
-    address: "789 Pine St, Chandigarh",
+    address: "789 Pine St",
+    area: "Sector 17",
+    city: "Chandigarh",
+    pincode: "160017",
     notes: "Looking for strong academic program"
   },
   {
@@ -60,7 +69,10 @@ const initialLeads = [
     date: "2023-03-01T11:00:00Z",
     status: "Enrolled",
     source: "WalkIn",
-    address: "101 Elm St, Hyderabad",
+    address: "101 Elm St",
+    area: "Jubilee Hills",
+    city: "Hyderabad",
+    pincode: "500033",
     notes: "Starting in the new semester"
   },
   {
@@ -73,7 +85,10 @@ const initialLeads = [
     date: "2023-02-25T13:30:00Z",
     status: "Closed",
     source: "Advertisement",
-    address: "202 Cedar St, Bangalore",
+    address: "202 Cedar St",
+    area: "Indiranagar",
+    city: "Bangalore",
+    pincode: "560038",
     notes: "Decided to go with another school"
   }
 ];
