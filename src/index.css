@@ -1,69 +1,52 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-
-    --card: 0 0% 98%;
-    --card-foreground: 240 10% 3.9%;
-
-    --popover: 0 0% 98%;
-    --popover-foreground: 240 10% 3.9%;
-
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 98%;
-
-    --secondary: 0 0% 95.9%;
-    --secondary-foreground: 0 0% 10%;
-
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 240 3.8% 46.1%;
-
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 10%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 10%;
-
+    --background: 0 0% 100%;       /* White */
+    --foreground: 0 0% 0%;          /* Black */
+    --card: 0 0% 100%;               /* White */
+    --card-foreground: 0 0% 0%;      /* Black */
+    --popover: 0 0% 100%;            /* White */
+    --popover-foreground: 0 0% 0%;   /* Black */
+    --primary: 0 0% 0%;              /* Black */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 0 0% 40%;           /* Medium Grey */
+    --secondary-foreground: 0 0% 100%; /* White */
+    --muted: 0 0% 80%;               /* Light Grey */
+    --muted-foreground: 0 0% 20%;    /* Dark Grey */
+    --accent: 0 0% 96%;              /* Very Light Grey */
+    --accent-foreground: 0 0% 0%;    /* Black */
+    --destructive: 0 0% 20%;         /* Dark Grey */
+    --destructive-foreground: 0 0% 100%; /* White */
+    --border: 0 0% 88%;              /* Light Grey */
+    --input: 0 0% 88%;               /* Light Grey */
+    --ring: 0 0% 0%;                 /* Black */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 14%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 14%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 10%;
-
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 83.9%;
+    /* Similar dark mode configuration with black, white, and grey tones */
+    --background: 0 0% 0%;           /* Black */
+    --foreground: 0 0% 100%;         /* White */
+    --card: 0 0% 10%;                /* Very Dark Grey */
+    --card-foreground: 0 0% 100%;    /* White */
+    --popover: 0 0% 10%;             /* Very Dark Grey */
+    --popover-foreground: 0 0% 100%; /* White */
+    --primary: 0 0% 100%;            /* White */
+    --primary-foreground: 0 0% 0%;   /* Black */
+    --secondary: 0 0% 50%;           /* Medium Grey */
+    --secondary-foreground: 0 0% 100%; /* White */
+    --muted: 0 0% 20%;               /* Dark Grey */
+    --muted-foreground: 0 0% 80%;    /* Light Grey */
+    --accent: 0 0% 15%;              /* Dark Grey */
+    --accent-foreground: 0 0% 100%;  /* White */
+    --destructive: 0 0% 40%;         /* Medium Grey */
+    --destructive-foreground: 0 0% 100%; /* White */
+    --border: 0 0% 20%;              /* Dark Grey */
+    --input: 0 0% 20%;               /* Dark Grey */
+    --ring: 0 0% 100%;               /* White */
   }
 }
 
