@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { 
-  ArrowUpDown, MoreHorizontal, Search, Filter, 
-  Check, X, Phone, Mail, Edit, Trash, MapPin, GraduationCap 
+  ArrowUpDown, MoreHorizontal, Search, Filter, Download,
+  Check, X, Phone, Mail, Edit, Trash, MapPin, GraduationCap,
+  ChevronLeft, ChevronRight
 } from "lucide-react";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -28,6 +30,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -58,6 +68,9 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [areaFilter, setAreaFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const { toast } = useToast();
 
   const uniqueAreas = Array.from(new Set(leads.map(lead => lead.area)));
@@ -76,6 +89,11 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   });
 
   const filteredLeads = sortedLeads.filter(lead => {
+    const leadDate = new Date(lead.date);
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(currentMonth);
+    const isInCurrentMonth = leadDate >= monthStart && leadDate <= monthEnd;
+
     const matchesSearch = 
       lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.parentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -87,15 +105,56 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     const matchesArea = areaFilter === "all" || lead.area === areaFilter;
     const matchesGrade = gradeFilter === "all" || lead.grade === gradeFilter;
     
-    return matchesSearch && matchesStatus && matchesSource && matchesArea && matchesGrade;
+    return matchesSearch && matchesStatus && matchesSource && matchesArea && matchesGrade && isInCurrentMonth;
   });
 
-  const requestSort = (key: keyof Lead) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
+  const nextMonth = () => {
+    setCurrentMonth(prev => {
+      const next = new Date(prev);
+      next.setMonth(next.getMonth() + 1);
+      return next;
+    });
+  };
+
+  const previousMonth = () => {
+    setCurrentMonth(prev => {
+      const prev_month = new Date(prev);
+      prev_month.setMonth(prev_month.getMonth() - 1);
+      return prev_month;
+    });
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Name', 'Parent Name', 'Phone', 'Email', 'Area', 'City', 'Grade', 'Status', 'Date'];
+    const data = filteredLeads.map(lead => [
+      lead.name,
+      lead.parentName,
+      lead.phone,
+      lead.email,
+      lead.area,
+      lead.city,
+      lead.grade,
+      lead.status,
+      format(new Date(lead.date), 'yyyy-MM-dd')
+    ]);
+
+    const csvContent = [headers, ...data]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `leads-${format(currentMonth, 'yyyy-MM')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Export Successful",
+      description: "The leads data has been exported to CSV",
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -142,6 +201,10 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     });
   };
 
+  const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedLeads = filteredLeads.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <div>
       <div className="flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
@@ -156,6 +219,18 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
           />
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2 border rounded-lg p-2">
+            <Button variant="ghost" size="icon" onClick={previousMonth}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium">
+              {format(currentMonth, 'MMMM yyyy')}
+            </span>
+            <Button variant="ghost" size="icon" onClick={nextMonth}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[130px]">
               <div className="flex items-center gap-2">
@@ -221,6 +296,11 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
               <SelectItem value="Other">Other</SelectItem>
             </SelectContent>
           </Select>
+
+          <Button variant="outline" onClick={exportToCSV}>
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
         </div>
       </div>
 
@@ -259,14 +339,14 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredLeads.length === 0 ? (
+            {paginatedLeads.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-24 text-center">
                   No leads found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredLeads.map((lead) => (
+              paginatedLeads.map((lead) => (
                 <TableRow key={lead.id}>
                   <TableCell className="font-medium">{lead.name}</TableCell>
                   <TableCell>{lead.parentName}</TableCell>
@@ -349,6 +429,35 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="mt-4 flex items-center justify-center">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  onClick={() => setCurrentPage(page)}
+                  isActive={currentPage === page}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext 
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
