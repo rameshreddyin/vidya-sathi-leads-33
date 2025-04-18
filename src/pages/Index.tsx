@@ -106,6 +106,7 @@ type Lead = {
   date: string;
   status: string;
   source: string;
+  notes: string;
 };
 
 const Index = () => {
