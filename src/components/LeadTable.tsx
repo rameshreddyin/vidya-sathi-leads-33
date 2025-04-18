@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { 
-  ArrowUpDown, MoreHorizontal, Search, Filter, Download,
+  ArrowUpDown, MoreHorizontal, Search, Filter,
   Check, X, Phone, Mail, Edit, Trash, MapPin, GraduationCap,
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight, Download
 } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Select,
@@ -38,8 +38,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 type Lead = {
   id: string;
@@ -250,73 +256,86 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-gray-500" />
-                  <span>Status</span>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                <Filter className="h-4 w-4 text-gray-500 mr-2" />
+                Filters
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" align="end">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Status</h4>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="New">New</SelectItem>
+                      <SelectItem value="Contacted">Contacted</SelectItem>
+                      <SelectItem value="Qualified">Qualified</SelectItem>
+                      <SelectItem value="Enrolled">Enrolled</SelectItem>
+                      <SelectItem value="Closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="New">New</SelectItem>
-                <SelectItem value="Contacted">Contacted</SelectItem>
-                <SelectItem value="Qualified">Qualified</SelectItem>
-                <SelectItem value="Enrolled">Enrolled</SelectItem>
-                <SelectItem value="Closed">Closed</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={areaFilter} onValueChange={setAreaFilter}>
-              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-gray-500" />
-                  <span>Area</span>
+                <Separator />
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Area</h4>
+                  <Select value={areaFilter} onValueChange={setAreaFilter}>
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select area" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Areas</SelectItem>
+                      {uniqueAreas.map((area) => (
+                        <SelectItem key={area} value={area}>{area}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">All Areas</SelectItem>
-                {uniqueAreas.map((area) => (
-                  <SelectItem key={area} value={area}>{area}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={gradeFilter} onValueChange={setGradeFilter}>
-              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
-                <div className="flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-gray-500" />
-                  <span>Grade</span>
+                <Separator />
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Grade</h4>
+                  <Select value={gradeFilter} onValueChange={setGradeFilter}>
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Grades</SelectItem>
+                      {uniqueGrades.map((grade) => (
+                        <SelectItem key={grade} value={grade}>Class {grade}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">All Grades</SelectItem>
-                {uniqueGrades.map((grade) => (
-                  <SelectItem key={grade} value={grade}>Class {grade}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={sourceFilter} onValueChange={setSourceFilter}>
-              <SelectTrigger className="w-[140px] bg-white border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-gray-500" />
-                  <span>Source</span>
+                <Separator />
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Source</h4>
+                  <Select value={sourceFilter} onValueChange={setSourceFilter}>
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Sources</SelectItem>
+                      <SelectItem value="Website">Website</SelectItem>
+                      <SelectItem value="WalkIn">Walk-in</SelectItem>
+                      <SelectItem value="Referral">Referral</SelectItem>
+                      <SelectItem value="SocialMedia">Social Media</SelectItem>
+                      <SelectItem value="Advertisement">Advertisement</SelectItem>
+                      <SelectItem value="Exhibition">Exhibition</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">All Sources</SelectItem>
-                <SelectItem value="Website">Website</SelectItem>
-                <SelectItem value="WalkIn">Walk-in</SelectItem>
-                <SelectItem value="Referral">Referral</SelectItem>
-                <SelectItem value="SocialMedia">Social Media</SelectItem>
-                <SelectItem value="Advertisement">Advertisement</SelectItem>
-                <SelectItem value="Exhibition">Exhibition</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              </div>
+            </PopoverContent>
+          </Popover>
 
           <Button 
             variant="outline" 
