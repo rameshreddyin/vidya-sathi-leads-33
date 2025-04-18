@@ -2,6 +2,7 @@
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
 
 export function Header() {
   const currentMonth = new Date().toLocaleString('default', { month: 'long' });
@@ -19,10 +20,38 @@ export function Header() {
             </div>
             <nav className="ml-10 hidden lg:flex">
               <ul className="flex items-center gap-6 text-sm font-medium">
-                <li className="text-education-700 font-semibold border-b-2 border-education-500">Dashboard</li>
-                <li className="text-muted-foreground">Leads</li>
-                <li className="text-muted-foreground">Analytics</li>
-                <li className="text-muted-foreground">Settings</li>
+                <li>
+                  <Link 
+                    to="/" 
+                    className="text-muted-foreground hover:text-education-700 transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/users" 
+                    className="text-muted-foreground hover:text-education-700 transition-colors"
+                  >
+                    User Management
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/leads" 
+                    className="text-muted-foreground hover:text-education-700 transition-colors"
+                  >
+                    Leads
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/analytics" 
+                    className="text-muted-foreground hover:text-education-700 transition-colors"
+                  >
+                    Analytics
+                  </Link>
+                </li>
               </ul>
             </nav>
           </div>
