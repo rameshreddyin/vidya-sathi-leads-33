@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 const initialLeads = [{
   id: "1",
   name: "Aarav Sharma",
@@ -311,6 +312,7 @@ const initialLeads = [{
   pincode: "390007",
   notes: "School infrastructure inquiry"
 }];
+
 type Lead = {
   id: string;
   name: string;
@@ -327,6 +329,7 @@ type Lead = {
   source: string;
   notes: string;
 };
+
 const Index = () => {
   const [leads, setLeads] = useState(initialLeads);
   const [open, setOpen] = useState(false);
@@ -335,15 +338,18 @@ const Index = () => {
   const {
     toast
   } = useToast();
+
   useEffect(() => {
     const savedLeads = localStorage.getItem("vidyasathi-leads");
     if (savedLeads) {
       setLeads(JSON.parse(savedLeads));
     }
   }, []);
+
   useEffect(() => {
     localStorage.setItem("vidyasathi-leads", JSON.stringify(leads));
   }, [leads]);
+
   const handleAddLead = (data: any) => {
     if (editingLead) {
       setLeads(leads.map(lead => lead.id === editingLead.id ? {
@@ -367,10 +373,12 @@ const Index = () => {
       });
     }
   };
+
   const handleEditLead = (lead: Lead) => {
     setEditingLead(lead);
     setOpen(true);
   };
+
   const handleDeleteLead = (id: string) => {
     const leadToDelete = leads.find(lead => lead.id !== id);
     setLeads(leads.filter(lead => lead.id !== id));
@@ -380,19 +388,13 @@ const Index = () => {
       variant: "destructive"
     });
   };
+
   return <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <div className="flex-1">
           <Header />
           <main className="flex-1 space-y-6 p-8">
-            <div className="flex items-center justify-between">
-              <div>
-                
-                
-              </div>
-            </div>
-
             <div className="bg-white rounded-lg border shadow-sm p-1">
               <Tabs defaultValue="leads" value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="w-full bg-gray-50 p-1 grid grid-cols-3 gap-2">
@@ -438,30 +440,20 @@ const Index = () => {
                 </TabsContent>
 
                 <TabsContent value="users" className="p-4 pt-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold tracking-tight">User Management</h2>
-                      <p className="text-muted-foreground">Manage your organization's user accounts and roles</p>
-                    </div>
-                    <Button>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add New User
-                    </Button>
-                  </div>
-                  <div className="h-[200px] flex items-center justify-center border rounded-md">
-                    <p className="text-muted-foreground">Navigate to "School Management" in the header to access full user management system</p>
-                  </div>
+                  <UserManagement />
                 </TabsContent>
                 
                 <TabsContent value="analytics" className="p-4 pt-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold tracking-tight">Analytics</h2>
-                      <p className="text-muted-foreground">View insights and reports about your school data</p>
-                    </div>
-                  </div>
-                  <div className="h-[200px] flex items-center justify-center border rounded-md">
-                    <p className="text-muted-foreground">Analytics dashboard is coming soon</p>
+                  <div className="flex flex-col items-center justify-center space-y-4 py-8">
+                    <img 
+                      src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop"
+                      alt="Analytics Coming Soon"
+                      className="rounded-lg shadow-lg w-96 h-64 object-cover"
+                    />
+                    <h2 className="text-2xl font-bold text-gray-900 mt-4">Analytics Dashboard Coming Soon</h2>
+                    <p className="text-gray-600 text-center max-w-md">
+                      We're working on building powerful analytics tools to help you make data-driven decisions. Stay tuned!
+                    </p>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -471,4 +463,5 @@ const Index = () => {
       </div>
     </SidebarProvider>;
 };
+
 export default Index;

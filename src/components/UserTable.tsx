@@ -25,7 +25,6 @@ interface UserTableProps {
 }
 
 export function UserTable({ searchTerm }: UserTableProps) {
-  // Mock data - replace with actual data from your backend
   const users: User[] = [
     {
       id: "1",
@@ -43,6 +42,30 @@ export function UserTable({ searchTerm }: UserTableProps) {
       assignedLocation: "Andheri East",
       status: "active",
     },
+    {
+      id: "3",
+      name: "Mike Johnson",
+      email: "mike@example.com",
+      role: "admin",
+      assignedLocation: "Mumbai Central",
+      status: "active",
+    },
+    {
+      id: "4",
+      name: "Sarah Wilson",
+      email: "sarah@example.com",
+      role: "staff",
+      assignedLocation: "Andheri East",
+      status: "inactive",
+    },
+    {
+      id: "5",
+      name: "Alex Brown",
+      email: "alex@example.com",
+      role: "staff",
+      assignedLocation: "Mumbai Central",
+      status: "active",
+    }
   ];
 
   const filteredUsers = users.filter(user =>
