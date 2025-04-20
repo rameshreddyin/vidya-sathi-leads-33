@@ -19,13 +19,13 @@ export function sanitizeInput(input: string): string {
  * Sanitizes an object's string properties recursively
  */
 export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
-  const result = { ...obj };
+  const result = { ...obj } as T;
   
-  Object.keys(result).forEach(key => {
+  (Object.keys(result) as Array<keyof T>).forEach(key => {
     if (typeof result[key] === 'string') {
-      result[key] = sanitizeInput(result[key]);
+      result[key] = sanitizeInput(result[key] as string) as T[keyof T];
     } else if (typeof result[key] === 'object' && result[key] !== null) {
-      result[key] = sanitizeObject(result[key]);
+      result[key] = sanitizeObject(result[key] as Record<string, any>) as T[keyof T];
     }
   });
   
