@@ -12,6 +12,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserManagement from "@/pages/UserManagement";
 import { Lead, ContactHistoryEntry } from "@/types";
+import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 
 const initialLeads = [{
   id: "1",
@@ -468,16 +469,12 @@ const Index = () => {
                 </TabsContent>
                 
                 <TabsContent value="analytics" className="p-4 pt-6">
-                  <div className="flex flex-col items-center justify-center space-y-4 py-8">
-                    <img 
-                      src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop"
-                      alt="Analytics Coming Soon"
-                      className="rounded-lg shadow-lg w-96 h-64 object-cover"
-                    />
-                    <h2 className="text-2xl font-bold text-gray-900 mt-4">Analytics Dashboard Coming Soon</h2>
-                    <p className="text-gray-600 text-center max-w-md">
-                      We're working on building powerful analytics tools to help you make data-driven decisions. Stay tuned!
+                  <div>
+                    <h2 className="text-2xl font-bold tracking-tight mb-2">Analytics Dashboard</h2>
+                    <p className="text-muted-foreground mb-6">
+                      Comprehensive insights into your school's lead management performance
                     </p>
+                    <AnalyticsDashboard leads={leads} />
                   </div>
                 </TabsContent>
               </Tabs>

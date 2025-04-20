@@ -22,9 +22,10 @@ import type { User } from "@/pages/UserManagement";
 
 interface UserTableProps {
   searchTerm: string;
+  onEditUser: (user: User) => void;
 }
 
-export function UserTable({ searchTerm }: UserTableProps) {
+export function UserTable({ searchTerm, onEditUser }: UserTableProps) {
   const users: User[] = [
     {
       id: "1",
@@ -113,7 +114,7 @@ export function UserTable({ searchTerm }: UserTableProps) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onEditUser(user)}>
                       <Pencil className="mr-2 h-4 w-4" />
                       Edit User
                     </DropdownMenuItem>

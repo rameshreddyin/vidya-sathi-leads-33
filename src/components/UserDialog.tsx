@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,28 +12,48 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { User } from "@/pages/UserManagement";
 
-interface CreateUserDialogProps {
+interface UserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: User;
+  onSubmit: (data: Omit<User, 'id'>) => void;
 }
 
-export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) {
+export function UserDialog({ open, onOpenChange, initialData, onSubmit }: UserDialogProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     role: "",
-    location: "",
+    assignedLocation: "",
+    status: "active"
   });
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name,
+        email: initialData.email,
+        role: initialData.role,
+        assignedLocation: initialData.assignedLocation,
+        status: initialData.status
+      });
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        role: "",
+        assignedLocation: "",
+        status: "active"
+      });
+    }
+  }, [initialData]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically make an API call to create the user
-    toast({
-      title: "Success",
-      description: "User has been created successfully.",
-    });
+    onSubmit(formData);
     onOpenChange(false);
   };
 
@@ -41,7 +61,7 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create New User</DialogTitle>
+          <DialogTitle>{initialData ? 'Edit User' : 'Create New User'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -81,8 +101,8 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
           <div className="space-y-2">
             <Label htmlFor="location">Assigned Location</Label>
             <Select
-              value={formData.location}
-              onValueChange={(value) => setFormData({ ...formData, location: value })}
+              value={formData.assignedLocation}
+              onValueChange={(value) => setFormData({ ...formData, assignedLocation: value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select location" />
@@ -95,11 +115,26 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              value={formData.status}
+              onValueChange={(value) => setFormData({ ...formData, status: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">Create User</Button>
+            <Button type="submit">{initialData ? 'Update' : 'Create'} User</Button>
           </div>
         </form>
       </DialogContent>

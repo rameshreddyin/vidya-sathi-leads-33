@@ -1,66 +1,77 @@
 
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { UserTable } from "@/components/UserTable";
-import { CreateUserDialog } from "@/components/CreateUserDialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { UserDialog } from "@/components/UserDialog";
 import { LocationManagement } from "@/components/LocationManagement";
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "staff";
+  role: string;
   assignedLocation: string;
-  status: "active" | "inactive";
+  status: string;
 }
 
 const UserManagement = () => {
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | undefined>();
+
+  const handleUserSubmit = (userData: Omit<User, 'id'>) => {
+    // Here you would typically make an API call to update/create the user
+    console.log('User data submitted:', userData);
+    setDialogOpen(false);
+    setEditingUser(undefined);
+  };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">User Management</h1>
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight mb-2">User Management</h2>
+        <p className="text-muted-foreground">
+          Manage staff and admin users across all locations
+        </p>
       </div>
 
-      <Tabs defaultValue="users" className="w-full">
-        <TabsList className="w-full bg-white border mb-6">
-          <TabsTrigger value="users" className="flex-1">Users</TabsTrigger>
-          <TabsTrigger value="locations" className="flex-1">Locations</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="users" className="space-y-4">
-          <div className="flex justify-between items-center">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add User
-            </Button>
-          </div>
-          <UserTable searchTerm={searchTerm} />
-        </TabsContent>
+      <div className="flex items-center justify-between">
+        <div className="relative w-[300px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Button onClick={() => {
+          setEditingUser(undefined);
+          setDialogOpen(true);
+        }}>
+          Add New User
+        </Button>
+      </div>
 
-        <TabsContent value="locations" className="mt-0">
-          <LocationManagement />
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-8">
+        <UserTable 
+          searchTerm={searchTerm} 
+          onEditUser={(user) => {
+            setEditingUser(user);
+            setDialogOpen(true);
+          }}
+        />
+      </div>
 
-      <CreateUserDialog 
-        open={isCreateDialogOpen} 
-        onOpenChange={setIsCreateDialogOpen} 
+      <LocationManagement />
+
+      <UserDialog 
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        initialData={editingUser}
+        onSubmit={handleUserSubmit}
       />
     </div>
   );
