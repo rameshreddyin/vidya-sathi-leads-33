@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Reminder } from "@/types";
+import { cn } from "@/lib/utils";
 
 interface ReminderListProps {
   reminders: Reminder[];
