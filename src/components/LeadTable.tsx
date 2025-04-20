@@ -3,7 +3,7 @@ import {
   ArrowUpDown, MoreHorizontal, Search, Filter,
   Check, X, Phone, Mail, Edit, Trash, Download,
   MessageSquare,
-  whatsapp as Whatsapp,
+  MessageCircle as Whatsapp, // Replace whatsapp with a similar icon
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
