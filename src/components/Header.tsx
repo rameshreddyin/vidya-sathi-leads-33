@@ -1,14 +1,8 @@
 
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const currentYear = new Date().getFullYear();
@@ -38,23 +32,7 @@ export function Header() {
                     to="/users" 
                     className="text-muted-foreground hover:text-education-700 transition-colors"
                   >
-                    User Management
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    to="/leads" 
-                    className="text-muted-foreground hover:text-education-700 transition-colors"
-                  >
-                    Leads
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    to="/analytics" 
-                    className="text-muted-foreground hover:text-education-700 transition-colors"
-                  >
-                    Analytics
+                    School Management
                   </Link>
                 </li>
               </ul>

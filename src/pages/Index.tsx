@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Metrics } from "@/components/Metrics";
 import { useToast } from "@/components/ui/use-toast";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const initialLeads = [
   {
@@ -354,6 +356,7 @@ const Index = () => {
   const [leads, setLeads] = useState(initialLeads);
   const [open, setOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState("leads");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -396,7 +399,7 @@ const Index = () => {
   };
 
   const handleDeleteLead = (id: string) => {
-    const leadToDelete = leads.find(lead => lead.id === id);
+    const leadToDelete = leads.find(lead => lead.id !== id);
     setLeads(leads.filter(lead => lead.id !== id));
     toast({
       title: "Lead Deleted",
@@ -414,38 +417,91 @@ const Index = () => {
           <main className="flex-1 space-y-6 p-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Lead Management</h1>
-                <p className="text-muted-foreground">Keep track of all prospective admissions</p>
+                <h1 className="text-3xl font-bold tracking-tight">School Management</h1>
+                <p className="text-muted-foreground">Manage your school leads, data and analytics</p>
               </div>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add New Lead
-                  </Button>
-                </DialogTrigger>
-                <LeadForm 
-                  onSubmit={handleAddLead} 
-                  onClose={() => {
-                    setOpen(false);
-                    setEditingLead(undefined);
-                  }}
-                  initialData={editingLead}
-                />
-              </Dialog>
             </div>
 
-            <Metrics leads={leads} />
+            <div className="bg-white rounded-lg border shadow-sm p-1">
+              <Tabs defaultValue="leads" value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="w-full bg-gray-50 p-1 grid grid-cols-3 gap-2">
+                  <TabsTrigger value="leads" className="font-medium">
+                    Lead Management
+                  </TabsTrigger>
+                  <TabsTrigger value="users" className="font-medium">
+                    User Management
+                  </TabsTrigger>
+                  <TabsTrigger value="analytics" className="font-medium">
+                    Analytics
+                  </TabsTrigger>
+                </TabsList>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold tracking-tight">Student Leads</h2>
-              </div>
-              <LeadTable 
-                leads={leads} 
-                onDeleteLead={handleDeleteLead}
-                onEditLead={handleEditLead}
-              />
+                <TabsContent value="leads" className="p-4 pt-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight">Lead Management</h2>
+                      <p className="text-muted-foreground">Keep track of all prospective admissions</p>
+                    </div>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                      <DialogTrigger asChild>
+                        <Button>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add New Lead
+                        </Button>
+                      </DialogTrigger>
+                      <LeadForm 
+                        onSubmit={handleAddLead} 
+                        onClose={() => {
+                          setOpen(false);
+                          setEditingLead(undefined);
+                        }}
+                        initialData={editingLead}
+                      />
+                    </Dialog>
+                  </div>
+
+                  <Metrics leads={leads} />
+
+                  <div className="space-y-4 mt-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-bold tracking-tight">Student Leads</h3>
+                    </div>
+                    <LeadTable 
+                      leads={leads} 
+                      onDeleteLead={handleDeleteLead}
+                      onEditLead={handleEditLead}
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="users" className="p-4 pt-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight">User Management</h2>
+                      <p className="text-muted-foreground">Manage your organization's user accounts and roles</p>
+                    </div>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add New User
+                    </Button>
+                  </div>
+                  <div className="h-[200px] flex items-center justify-center border rounded-md">
+                    <p className="text-muted-foreground">Navigate to "School Management" in the header to access full user management system</p>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="analytics" className="p-4 pt-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight">Analytics</h2>
+                      <p className="text-muted-foreground">View insights and reports about your school data</p>
+                    </div>
+                  </div>
+                  <div className="h-[200px] flex items-center justify-center border rounded-md">
+                    <p className="text-muted-foreground">Analytics dashboard is coming soon</p>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </main>
         </div>

@@ -1,10 +1,10 @@
+
 import { useState } from "react";
 import { 
   ArrowUpDown, MoreHorizontal, Search, Filter,
-  Check, X, Phone, Mail, Edit, Trash, MapPin, GraduationCap,
-  ChevronLeft, ChevronRight, Download
+  Check, X, Phone, Mail, Edit, Trash, Download
 } from "lucide-react";
-import { format, startOfMonth, endOfMonth } from "date-fns";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -74,6 +74,12 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [areaFilter, setAreaFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const { toast } = useToast();
+
+  const uniqueAreas = Array.from(new Set(leads.map(lead => lead.area)));
+  const uniqueGrades = Array.from(new Set(leads.map(lead => lead.grade))).sort((a, b) => Number(a) - Number(b));
 
   const requestSort = (key: keyof Lead) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -82,13 +88,6 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     }
     setSortConfig({ key, direction });
   };
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const { toast } = useToast();
-
-  const uniqueAreas = Array.from(new Set(leads.map(lead => lead.area)));
-  const uniqueGrades = Array.from(new Set(leads.map(lead => lead.grade))).sort((a, b) => Number(a) - Number(b));
 
   const sortedLeads = [...leads].sort((a, b) => {
     if (!sortConfig) return 0;
@@ -103,11 +102,6 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   });
 
   const filteredLeads = sortedLeads.filter(lead => {
-    const leadDate = new Date(lead.date);
-    const monthStart = startOfMonth(currentMonth);
-    const monthEnd = endOfMonth(currentMonth);
-    const isInCurrentMonth = leadDate >= monthStart && leadDate <= monthEnd;
-
     const matchesSearch = 
       lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.parentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -119,24 +113,8 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     const matchesArea = areaFilter === "all" || lead.area === areaFilter;
     const matchesGrade = gradeFilter === "all" || lead.grade === gradeFilter;
     
-    return matchesSearch && matchesStatus && matchesSource && matchesArea && matchesGrade && isInCurrentMonth;
+    return matchesSearch && matchesStatus && matchesSource && matchesArea && matchesGrade;
   });
-
-  const nextMonth = () => {
-    setCurrentMonth(prev => {
-      const next = new Date(prev);
-      next.setMonth(next.getMonth() + 1);
-      return next;
-    });
-  };
-
-  const previousMonth = () => {
-    setCurrentMonth(prev => {
-      const prev_month = new Date(prev);
-      prev_month.setMonth(prev_month.getMonth() - 1);
-      return prev_month;
-    });
-  };
 
   const exportToCSV = () => {
     const headers = ['Name', 'Parent Name', 'Phone', 'Email', 'Area', 'City', 'Grade', 'Status', 'Date'];
@@ -160,7 +138,7 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `leads-${format(currentMonth, 'yyyy-MM')}.csv`);
+    link.setAttribute('download', `leads-export.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -186,11 +164,6 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
       default:
         return <Badge>{status}</Badge>;
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
   const handleStatusUpdate = (leadId: string, newStatus: string) => {
@@ -234,28 +207,6 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={previousMonth}
-              className="hover:bg-gray-50"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="px-3 text-sm font-medium border-x">
-              {format(currentMonth, 'MMMM yyyy')}
-            </span>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={nextMonth}
-              className="hover:bg-gray-50"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-
           <Popover>
             <PopoverTrigger asChild>
               <Button 
