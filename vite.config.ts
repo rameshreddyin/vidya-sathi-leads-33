@@ -12,10 +12,9 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react({
-      // Enable tree-shaking optimization
-      babel: {
-        plugins: mode === 'production' ? [] : undefined
-      }
+      // SWC optimizations instead of babel
+      jsxImportSource: undefined,
+      plugins: mode === 'production' ? [] : undefined
     }),
     mode === 'development' &&
     componentTagger(),
