@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { 
   ArrowUpDown, MoreHorizontal, Search, Filter,
-  Check, X, Phone, Mail, Edit, Trash, Download
+  Check, X, Phone, Mail, Edit, Trash, Download,
+  MessageSquare
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -46,27 +47,14 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
+import { ContactHistoryDialog } from "./ContactHistoryDialog";
+import { Lead, ContactHistoryEntry } from "@/types";
 
-type Lead = {
-  id: string;
-  name: string;
-  parentName: string;
-  phone: string;
-  email: string;
-  address: string;
-  area: string;
-  city: string;
-  pincode: string;
-  grade: string;
-  date: string;
-  status: string;
-  source: string;
-};
-
-export function LeadTable({ leads, onDeleteLead, onEditLead }: { 
+export function LeadTable({ leads, onDeleteLead, onEditLead, onAddContactHistory }: { 
   leads: Lead[]; 
   onDeleteLead: (id: string) => void;
   onEditLead: (lead: Lead) => void;
+  onAddContactHistory: (leadId: string, entry: Omit<ContactHistoryEntry, 'id'>) => void;
 }) {
   const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState<{ key: keyof Lead; direction: 'asc' | 'desc' } | null>(null);
@@ -76,6 +64,8 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   const [areaFilter, setAreaFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const itemsPerPage = 10;
   const { toast } = useToast();
 
@@ -168,25 +158,65 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   };
 
   const handleStatusUpdate = (leadId: string, newStatus: string) => {
+    // Find the lead to update
+    const lead = leads.find(l => l.id === leadId);
+    if (lead) {
+      // Create a contact history entry for the status update
+      onAddContactHistory(leadId, {
+        leadId,
+        type: 'Other',
+        notes: `Status updated to ${newStatus}`,
+        status: newStatus,
+        date: new Date().toISOString()
+      });
+    }
+    
     toast({
       title: "Status Updated",
       description: `Lead status has been changed to ${newStatus}`,
     });
   };
 
-  const handleSendEmail = (email: string) => {
+  const handleSendEmail = (email: string, leadId?: string) => {
     window.location.href = `mailto:${email}`;
+    
+    // If we have a lead ID, open the contact dialog to log the email
+    if (leadId) {
+      const lead = leads.find(l => l.id === leadId);
+      if (lead) {
+        setSelectedLead(lead);
+        setContactDialogOpen(true);
+      }
+    }
+    
     toast({
       title: "Email Client Opened",
       description: "Your default email client has been opened.",
     });
   };
 
-  const handleCallLog = (phone: string) => {
+  const handleCallLog = (phone: string, leadId?: string) => {
+    // If we have a lead ID, open the contact dialog to log the call
+    if (leadId) {
+      const lead = leads.find(l => l.id === leadId);
+      if (lead) {
+        setSelectedLead(lead);
+        setContactDialogOpen(true);
+      }
+    }
+    
     toast({
       title: "Call Logged",
       description: `Initiating call to ${phone}`,
     });
+  };
+
+  const handleSaveContactHistory = (entry: Omit<ContactHistoryEntry, 'id'>) => {
+    if (selectedLead) {
+      onAddContactHistory(selectedLead.id, entry);
+      setContactDialogOpen(false);
+      setSelectedLead(null);
+    }
   };
 
   const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
@@ -360,7 +390,7 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
                         variant="ghost" 
                         className="h-8 w-8" 
                         title={lead.phone}
-                        onClick={() => handleCallLog(lead.phone)}
+                        onClick={() => handleCallLog(lead.phone, lead.id)}
                       >
                         <Phone className="h-4 w-4 text-education-600" />
                       </Button>
@@ -370,7 +400,7 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
                           variant="ghost" 
                           className="h-8 w-8" 
                           title={lead.email}
-                          onClick={() => handleSendEmail(lead.email)}
+                          onClick={() => handleSendEmail(lead.email, lead.id)}
                         >
                           <Mail className="h-4 w-4 text-education-600" />
                         </Button>
@@ -411,13 +441,22 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuLabel>Communication</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleSendEmail(lead.email)}>
+                        <DropdownMenuItem onClick={() => handleSendEmail(lead.email, lead.id)}>
                           <Mail className="mr-2 h-4 w-4 text-education-600" />
                           <span>Send Email</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleCallLog(lead.phone)}>
+                        <DropdownMenuItem onClick={() => handleCallLog(lead.phone, lead.id)}>
                           <Phone className="mr-2 h-4 w-4 text-education-600" />
                           <span>Log Call</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            setSelectedLead(lead);
+                            setContactDialogOpen(true);
+                          }}
+                        >
+                          <MessageSquare className="mr-2 h-4 w-4 text-education-600" />
+                          <span>Add Contact Record</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => onDeleteLead(lead.id)} className="text-red-600">
@@ -462,6 +501,16 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
           </PaginationContent>
         </Pagination>
       </div>
+      
+      {selectedLead && (
+        <ContactHistoryDialog 
+          open={contactDialogOpen} 
+          onOpenChange={setContactDialogOpen}
+          onSave={handleSaveContactHistory}
+          leadId={selectedLead.id}
+          leadName={selectedLead.name}
+        />
+      )}
     </div>
   );
 }

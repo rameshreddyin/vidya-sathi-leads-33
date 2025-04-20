@@ -11,6 +11,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserManagement from "@/pages/UserManagement";
+import { Lead, ContactHistoryEntry } from "@/types";
 
 const initialLeads = [{
   id: "1",
@@ -314,27 +315,16 @@ const initialLeads = [{
   notes: "School infrastructure inquiry"
 }];
 
-type Lead = {
-  id: string;
-  name: string;
-  parentName: string;
-  phone: string;
-  email: string;
-  address: string;
-  area: string;
-  city: string;
-  pincode: string;
-  grade: string;
-  date: string;
-  status: string;
-  source: string;
-  notes: string;
-};
+// Using the Lead type imported from @/types
+import type { Lead as LeadType } from "@/types";
 
 const Index = () => {
-  const [leads, setLeads] = useState(initialLeads);
+  const [leads, setLeads] = useState<LeadType[]>(initialLeads.map(lead => ({
+    ...lead,
+    contactHistory: []
+  })));
   const [open, setOpen] = useState(false);
-  const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
+  const [editingLead, setEditingLead] = useState<LeadType | undefined>(undefined);
   const [activeTab, setActiveTab] = useState("leads");
   const {
     toast
@@ -390,6 +380,34 @@ const Index = () => {
     });
   };
 
+  const handleAddContactHistory = (leadId: string, entry: Omit<ContactHistoryEntry, 'id'>) => {
+    const newEntry: ContactHistoryEntry = {
+      ...entry,
+      id: `contact-${Date.now()}`
+    };
+
+    setLeads(prevLeads => prevLeads.map(lead => {
+      if (lead.id === leadId) {
+        // Update lead status if status is provided in the contact entry
+        const newStatus = entry.status && ["Contacted", "Qualified", "Enrolled", "Closed"].includes(entry.status) 
+          ? entry.status 
+          : lead.status;
+        
+        return {
+          ...lead,
+          status: newStatus,
+          contactHistory: [...(lead.contactHistory || []), newEntry]
+        };
+      }
+      return lead;
+    }));
+
+    toast({
+      title: "Contact Recorded",
+      description: `Contact with ${leads.find(l => l.id === leadId)?.name || 'lead'} has been saved.`
+    });
+  };
+
   return <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
@@ -436,7 +454,12 @@ const Index = () => {
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-bold tracking-tight">Student Leads</h3>
                     </div>
-                    <LeadTable leads={leads} onDeleteLead={handleDeleteLead} onEditLead={handleEditLead} />
+                    <LeadTable 
+                      leads={leads} 
+                      onDeleteLead={handleDeleteLead} 
+                      onEditLead={handleEditLead} 
+                      onAddContactHistory={handleAddContactHistory}
+                    />
                   </div>
                 </TabsContent>
 

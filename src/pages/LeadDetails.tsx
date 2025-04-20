@@ -1,72 +1,73 @@
 
-import React from "react";
-import { useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Phone, Mail, Clock, FileText, History } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, MapPin, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { useNavigate } from "react-router-dom";
-
-type Lead = {
-  id: string;
-  name: string;
-  parentName: string;
-  phone: string;
-  email: string;
-  address: string;
-  area: string;
-  city: string;
-  pincode: string;
-  grade: string;
-  date: string;
-  status: string;
-  source: string;
-  notes: string;
-};
-
-const contactHistory = [
-  {
-    date: "2024-04-19T10:30:00Z",
-    type: "Phone Call",
-    notes: "Discussed admission process and fee structure",
-    status: "Contacted"
-  },
-  {
-    date: "2024-04-15T14:45:00Z",
-    type: "Email",
-    notes: "Sent course curriculum and facility details",
-    status: "Information Sent"
-  },
-  {
-    date: "2024-04-10T09:15:00Z",
-    type: "Meeting",
-    notes: "Campus visit scheduled for next week",
-    status: "Meeting Scheduled"
-  }
-];
+import { ContactHistoryList } from "@/components/ContactHistoryList";
+import { ContactHistoryDialog } from "@/components/ContactHistoryDialog";
+import { Lead, ContactHistoryEntry } from "@/types";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LeadDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [lead, setLead] = useState<Lead | null>(null);
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // For demo, we'll use static data - in real app this would come from a data source
-  const lead: Lead = {
-    id: "1",
-    name: "Aarav Sharma",
-    parentName: "Rajesh Sharma",
-    phone: "9876543210",
-    email: "rajesh.sharma@example.com",
-    grade: "8",
-    date: "2024-04-15T10:30:00Z",
-    status: "Qualified",
-    source: "Website",
-    address: "123 Main St",
-    area: "Vasant Kunj",
-    city: "Delhi",
-    pincode: "110070",
-    notes: "Interested in science program and extracurricular activities"
+  useEffect(() => {
+    // Fetch lead data from localStorage
+    const fetchLead = () => {
+      setLoading(true);
+      const savedLeads = localStorage.getItem("vidyasathi-leads");
+      if (savedLeads) {
+        const leads = JSON.parse(savedLeads) as Lead[];
+        const foundLead = leads.find(lead => lead.id === id);
+        if (foundLead) {
+          setLead(foundLead);
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchLead();
+  }, [id]);
+
+  const handleAddContactHistory = (entry: Omit<ContactHistoryEntry, 'id'>) => {
+    if (!lead || !id) return;
+
+    const newEntry: ContactHistoryEntry = {
+      ...entry,
+      id: `contact-${Date.now()}`
+    };
+
+    // Create updated lead with new contact history
+    const updatedLead = {
+      ...lead,
+      contactHistory: [...(lead.contactHistory || []), newEntry],
+      // Update status if needed
+      status: entry.status && ["Contacted", "Qualified", "Enrolled", "Closed"].includes(entry.status)
+        ? entry.status
+        : lead.status
+    };
+
+    setLead(updatedLead);
+
+    // Update in localStorage
+    const savedLeads = localStorage.getItem("vidyasathi-leads");
+    if (savedLeads) {
+      const leads = JSON.parse(savedLeads) as Lead[];
+      const updatedLeads = leads.map(l => l.id === id ? updatedLead : l);
+      localStorage.setItem("vidyasathi-leads", JSON.stringify(updatedLeads));
+    }
+
+    toast({
+      title: "Contact Recorded",
+      description: `Contact with ${lead.name} has been saved.`
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -87,6 +88,25 @@ export default function LeadDetails() {
       day: "numeric",
     });
   };
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+
+  if (!lead) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Button variant="ghost" onClick={() => navigate(-1)}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Leads
+        </Button>
+        <div className="flex flex-col items-center justify-center mt-12">
+          <h1 className="text-2xl font-bold mb-4">Lead Not Found</h1>
+          <p>The lead you're looking for doesn't exist or has been removed.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -109,11 +129,22 @@ export default function LeadDetails() {
             </div>
           </div>
           <div className="space-x-4">
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={() => {
+                window.location.href = `tel:${lead.phone}`;
+                setContactDialogOpen(true);
+              }}
+            >
               <Phone className="mr-2 h-4 w-4" />
               Call Lead
             </Button>
-            <Button>
+            <Button
+              onClick={() => {
+                window.location.href = `mailto:${lead.email}`;
+                setContactDialogOpen(true);
+              }}
+            >
               <Mail className="mr-2 h-4 w-4" />
               Send Email
             </Button>
@@ -195,36 +226,20 @@ export default function LeadDetails() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle>Contact History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[400px] pr-4">
-                <div className="space-y-4">
-                  {contactHistory.map((contact, index) => (
-                    <div key={index} className="relative pl-6 pb-4">
-                      <div className="absolute left-0 top-2 w-px h-full bg-gray-200" />
-                      <div className="absolute left-0 top-2 w-2 h-2 rounded-full bg-gray-400" />
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium">{contact.type}</p>
-                          <Badge variant="outline">{contact.status}</Badge>
-                        </div>
-                        <p className="text-sm text-gray-500">
-                          {formatDate(contact.date)}
-                        </p>
-                        <p className="text-sm text-gray-600">{contact.notes}</p>
-                      </div>
-                      {index < contactHistory.length - 1 && <Separator className="mt-4" />}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <ContactHistoryList 
+            contactHistory={lead.contactHistory || []}
+            onAddContact={() => setContactDialogOpen(true)}
+          />
         </div>
       </div>
+
+      <ContactHistoryDialog
+        open={contactDialogOpen}
+        onOpenChange={setContactDialogOpen}
+        onSave={handleAddContactHistory}
+        leadId={lead.id}
+        leadName={lead.name}
+      />
     </div>
   );
 }
