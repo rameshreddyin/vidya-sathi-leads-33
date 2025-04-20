@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin, Phone, Mail } from "lucide-react";
@@ -7,8 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactHistoryList } from "@/components/ContactHistoryList";
 import { ContactHistoryDialog } from "@/components/ContactHistoryDialog";
-import { Lead, ContactHistoryEntry } from "@/types";
+import { Lead, ContactHistoryEntry, Reminder } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog } from "@/components/ui/dialog";
+import { ReminderDialog } from "@/components/ReminderDialog";
+import { ReminderList } from "@/components/ReminderList";
 
 export default function LeadDetails() {
   const { id } = useParams();
@@ -17,6 +19,7 @@ export default function LeadDetails() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [reminderDialogOpen, setReminderDialogOpen] = useState(false);
 
   useEffect(() => {
     // Fetch lead data from localStorage
@@ -86,6 +89,88 @@ export default function LeadDetails() {
       year: "numeric",
       month: "long",
       day: "numeric",
+    });
+  };
+
+  const handleAddReminder = (reminder: Omit<Reminder, 'id'>) => {
+    if (!lead) return;
+
+    const newReminder = {
+      ...reminder,
+      id: `reminder-${Date.now()}`
+    };
+
+    const updatedLead = {
+      ...lead,
+      reminders: [...(lead.reminders || []), newReminder]
+    };
+
+    setLead(updatedLead);
+
+    // Update in localStorage
+    const savedLeads = localStorage.getItem("vidyasathi-leads");
+    if (savedLeads) {
+      const leads = JSON.parse(savedLeads) as Lead[];
+      const updatedLeads = leads.map(l => l.id === id ? updatedLead : l);
+      localStorage.setItem("vidyasathi-leads", JSON.stringify(updatedLeads));
+    }
+
+    toast({
+      title: "Reminder Set",
+      description: `Reminder has been set for ${lead.name}`
+    });
+  };
+
+  const handleToggleReminder = (reminderId: string) => {
+    if (!lead) return;
+
+    const updatedReminders = (lead.reminders || []).map(reminder =>
+      reminder.id === reminderId
+        ? { ...reminder, isCompleted: !reminder.isCompleted }
+        : reminder
+    );
+
+    const updatedLead = {
+      ...lead,
+      reminders: updatedReminders
+    };
+
+    setLead(updatedLead);
+
+    // Update in localStorage
+    const savedLeads = localStorage.getItem("vidyasathi-leads");
+    if (savedLeads) {
+      const leads = JSON.parse(savedLeads) as Lead[];
+      const updatedLeads = leads.map(l => l.id === id ? updatedLead : l);
+      localStorage.setItem("vidyasathi-leads", JSON.stringify(updatedLeads));
+    }
+  };
+
+  const handleDeleteReminder = (reminderId: string) => {
+    if (!lead) return;
+
+    const updatedReminders = (lead.reminders || []).filter(
+      reminder => reminder.id !== reminderId
+    );
+
+    const updatedLead = {
+      ...lead,
+      reminders: updatedReminders
+    };
+
+    setLead(updatedLead);
+
+    // Update in localStorage
+    const savedLeads = localStorage.getItem("vidyasathi-leads");
+    if (savedLeads) {
+      const leads = JSON.parse(savedLeads) as Lead[];
+      const updatedLeads = leads.map(l => l.id === id ? updatedLead : l);
+      localStorage.setItem("vidyasathi-leads", JSON.stringify(updatedLeads));
+    }
+
+    toast({
+      title: "Reminder Deleted",
+      description: "The reminder has been removed"
     });
   };
 
@@ -226,6 +311,13 @@ export default function LeadDetails() {
             </CardContent>
           </Card>
 
+          <ReminderList
+            reminders={lead?.reminders || []}
+            onAddReminder={() => setReminderDialogOpen(true)}
+            onToggleComplete={handleToggleReminder}
+            onDeleteReminder={handleDeleteReminder}
+          />
+          
           <ContactHistoryList 
             contactHistory={lead.contactHistory || []}
             onAddContact={() => setContactDialogOpen(true)}
@@ -240,6 +332,15 @@ export default function LeadDetails() {
         leadId={lead.id}
         leadName={lead.name}
       />
+
+      <Dialog open={reminderDialogOpen} onOpenChange={setReminderDialogOpen}>
+        <ReminderDialog
+          leadId={lead?.id || ""}
+          leadName={lead?.name || ""}
+          onSave={handleAddReminder}
+          onClose={() => setReminderDialogOpen(false)}
+        />
+      </Dialog>
     </div>
   );
 }

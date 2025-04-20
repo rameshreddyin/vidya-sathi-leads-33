@@ -1,4 +1,3 @@
-
 // Contact and Lead types for the lead management system
 
 export type ContactHistoryEntry = {
@@ -8,6 +7,15 @@ export type ContactHistoryEntry = {
   notes: string;
   status: string;
   leadId: string;
+};
+
+export type Reminder = {
+  id: string;
+  leadId: string;
+  date: string;
+  title: string;
+  description?: string;
+  isCompleted: boolean;
 };
 
 export type Lead = {
@@ -26,4 +34,5 @@ export type Lead = {
   source: string;
   notes: string;
   contactHistory?: ContactHistoryEntry[];
+  reminders?: Reminder[];
 };
