@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   ArrowUpDown, MoreHorizontal, Search, Filter,
@@ -46,6 +45,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
 
 type Lead = {
   id: string;
@@ -68,6 +68,7 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
   onDeleteLead: (id: string) => void;
   onEditLead: (lead: Lead) => void;
 }) {
+  const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState<{ key: keyof Lead; direction: 'asc' | 'desc' } | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -343,7 +344,14 @@ export function LeadTable({ leads, onDeleteLead, onEditLead }: {
             ) : (
               paginatedLeads.map((lead) => (
                 <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <button
+                      onClick={() => navigate(`/leads/${lead.id}`)}
+                      className="text-left hover:text-primary hover:underline"
+                    >
+                      {lead.name}
+                    </button>
+                  </TableCell>
                   <TableCell>{lead.parentName}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
