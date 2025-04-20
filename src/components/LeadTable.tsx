@@ -2,7 +2,8 @@ import { useState } from "react";
 import { 
   ArrowUpDown, MoreHorizontal, Search, Filter,
   Check, X, Phone, Mail, Edit, Trash, Download,
-  MessageSquare
+  MessageSquare,
+  WhatsApp,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -223,6 +224,27 @@ export function LeadTable({ leads, onDeleteLead, onEditLead, onAddContactHistory
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedLeads = filteredLeads.slice(startIndex, startIndex + itemsPerPage);
 
+  const handleWhatsAppClick = (phone: string, leadId?: string) => {
+    // Format phone number (remove spaces, ensure it starts with country code)
+    const formattedPhone = phone.replace(/\s+/g, '');
+    const whatsappUrl = `https://wa.me/${formattedPhone}`;
+    window.open(whatsappUrl, '_blank');
+
+    // If we have a lead ID, open the contact dialog to log the interaction
+    if (leadId) {
+      const lead = leads.find(l => l.id === leadId);
+      if (lead) {
+        setSelectedLead(lead);
+        setContactDialogOpen(true);
+      }
+    }
+    
+    toast({
+      title: "WhatsApp Opening",
+      description: "Opening WhatsApp chat window",
+    });
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-6 py-6 md:flex-row md:items-center md:justify-between">
@@ -394,6 +416,15 @@ export function LeadTable({ leads, onDeleteLead, onEditLead, onAddContactHistory
                       >
                         <Phone className="h-4 w-4 text-education-600" />
                       </Button>
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        className="h-8 w-8" 
+                        title="Open in WhatsApp"
+                        onClick={() => handleWhatsAppClick(lead.phone, lead.id)}
+                      >
+                        <WhatsApp className="h-4 w-4 text-green-500" />
+                      </Button>
                       {lead.email && (
                         <Button 
                           size="icon" 
@@ -457,6 +488,10 @@ export function LeadTable({ leads, onDeleteLead, onEditLead, onAddContactHistory
                         >
                           <MessageSquare className="mr-2 h-4 w-4 text-education-600" />
                           <span>Add Contact Record</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleWhatsAppClick(lead.phone, lead.id)}>
+                          <WhatsApp className="mr-2 h-4 w-4 text-green-500" />
+                          <span>Open WhatsApp</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => onDeleteLead(lead.id)} className="text-red-600">
