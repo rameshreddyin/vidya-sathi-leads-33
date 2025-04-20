@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { MessageSquare, Phone, Mail, Calendar, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { sanitizeObject } from "@/lib/sanitize";
 import { 
   Dialog,
   DialogContent,
@@ -51,13 +51,15 @@ export function ContactHistoryDialog({
       return; // Basic validation
     }
     
-    onSave({
+    const sanitizedData = sanitizeObject({
       leadId,
       type: formData.type as ContactHistoryEntry['type'],
       notes: formData.notes,
       status: formData.status,
       date: new Date().toISOString(),
     });
+    
+    onSave(sanitizedData);
     
     // Reset form
     setFormData({

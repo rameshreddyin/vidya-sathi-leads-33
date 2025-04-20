@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DialogTitle, DialogDescription, DialogHeader, DialogFooter, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { sanitizeObject } from "@/lib/sanitize";
 
 type Lead = {
   id?: string;
@@ -62,12 +63,13 @@ export function LeadForm({ onSubmit, onClose, initialData }: LeadFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ 
+    const sanitizedData = sanitizeObject({ 
       ...formData,
       id: initialData?.id,
       status: initialData?.status || "New",
       date: initialData?.date || new Date().toISOString()
     });
+    onSubmit(sanitizedData);
     onClose();
   };
 
