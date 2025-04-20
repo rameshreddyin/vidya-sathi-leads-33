@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import UserManagement from "@/pages/UserManagement";
 
 const initialLeads = [{
   id: "1",
