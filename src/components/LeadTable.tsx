@@ -3,7 +3,7 @@ import {
   ArrowUpDown, MoreHorizontal, Search, Filter,
   Check, X, Phone, Mail, Edit, Trash, Download,
   MessageSquare,
-  WhatsApp,
+  WhatsApp as Whatsapp,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -423,7 +423,7 @@ export function LeadTable({ leads, onDeleteLead, onEditLead, onAddContactHistory
                         title="Open in WhatsApp"
                         onClick={() => handleWhatsAppClick(lead.phone, lead.id)}
                       >
-                        <WhatsApp className="h-4 w-4 text-green-500" />
+                        <Whatsapp className="h-4 w-4 text-green-500" />
                       </Button>
                       {lead.email && (
                         <Button 
@@ -490,7 +490,7 @@ export function LeadTable({ leads, onDeleteLead, onEditLead, onAddContactHistory
                           <span>Add Contact Record</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleWhatsAppClick(lead.phone, lead.id)}>
-                          <WhatsApp className="mr-2 h-4 w-4 text-green-500" />
+                          <Whatsapp className="mr-2 h-4 w-4 text-green-500" />
                           <span>Open WhatsApp</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

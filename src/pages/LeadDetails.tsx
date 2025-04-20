@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Phone, Mail, WhatsApp } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Mail, WhatsApp as Whatsapp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -233,7 +233,7 @@ export default function LeadDetails() {
               }}
               className="bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700 hover:border-green-300"
             >
-              <WhatsApp className="mr-2 h-4 w-4" />
+              <Whatsapp className="mr-2 h-4 w-4" />
               WhatsApp
             </Button>
             <Button
