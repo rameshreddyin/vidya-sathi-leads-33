@@ -13,16 +13,16 @@ export function Header() {
       <div className="flex h-16 items-center px-6 lg:px-8">
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center space-x-8">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <img src="/logo.svg" alt="" className="h-8 w-8" />
-              <span className="text-xl font-bold text-education-700">VidyaSathi</span>
-            </div>
+              <span className="text-xl font-bold text-gray-900">VidyaSathi</span>
+            </Link>
             <nav className="ml-10 hidden lg:flex">
               <ul className="flex items-center gap-6 text-sm font-medium">
                 <li>
                   <Link 
                     to="/" 
-                    className="text-muted-foreground hover:text-education-700 transition-colors"
+                    className="text-muted-foreground hover:text-gray-900 transition-colors"
                   >
                     Dashboard
                   </Link>
@@ -30,7 +30,7 @@ export function Header() {
                 <li>
                   <Link 
                     to="/users" 
-                    className="text-muted-foreground hover:text-education-700 transition-colors"
+                    className="text-muted-foreground hover:text-gray-900 transition-colors"
                   >
                     School Management
                   </Link>

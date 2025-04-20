@@ -21,23 +21,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
 
 const mainMenuItems = [
   { title: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { title: "Leads", icon: Users, href: "/leads" },
+  { title: "Leads", icon: Users, href: "/" },
 ];
 
 const academicMenuItems = [
-  { title: "Classes", icon: BookOpen, href: "/classes" },
-  { title: "Attendance", icon: Calendar, href: "/attendance" },
-  { title: "Exams", icon: ClipboardList, href: "/exams" },
-  { title: "Timetable", icon: Clock, href: "/timetable" },
+  { title: "Classes", icon: BookOpen, href: "#" },
+  { title: "Attendance", icon: Calendar, href: "#" },
+  { title: "Exams", icon: ClipboardList, href: "#" },
+  { title: "Timetable", icon: Clock, href: "#" },
 ];
 
 const adminMenuItems = [
-  { title: "Finance", icon: Calculator, href: "/finance" },
-  { title: "Events", icon: CalendarDays, href: "/events" },
-  { title: "Messages", icon: MessageSquare, href: "/messages" },
+  { title: "Finance", icon: Calculator, href: "#" },
+  { title: "Events", icon: CalendarDays, href: "#" },
+  { title: "Messages", icon: MessageSquare, href: "#" },
 ];
 
 export function AppSidebar() {
@@ -56,10 +57,10 @@ export function AppSidebar() {
               {mainMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.href} className="hover:bg-sidebar-hover">
+                    <Link to={item.href} className="hover:bg-gray-100">
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -74,10 +75,10 @@ export function AppSidebar() {
               {academicMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.href} className="hover:bg-sidebar-hover">
+                    <Link to={item.href} className="hover:bg-gray-100">
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -92,10 +93,10 @@ export function AppSidebar() {
               {adminMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.href} className="hover:bg-sidebar-hover">
+                    <Link to={item.href} className="hover:bg-gray-100">
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -109,7 +110,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <button className="w-full hover:bg-sidebar-hover">
+                    <button className="w-full hover:bg-gray-100">
                       <LogOut className="h-4 w-4" />
                       <span>Logout</span>
                     </button>
