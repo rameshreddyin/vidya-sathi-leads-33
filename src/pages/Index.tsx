@@ -10,7 +10,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
-// Sample data for initial demo
 const initialLeads = [
   {
     id: "1",
@@ -91,6 +90,246 @@ const initialLeads = [
     city: "Bangalore",
     pincode: "560038",
     notes: "Decided to go with another school"
+  },
+  {
+    id: "6",
+    name: "Meera Verma",
+    parentName: "Rahul Verma",
+    phone: "9876543211",
+    email: "rahul.verma@example.com",
+    grade: "4",
+    date: "2024-04-15T10:30:00Z",
+    status: "New",
+    source: "Website",
+    address: "42 Park Street",
+    area: "Koregaon Park",
+    city: "Pune",
+    pincode: "411001",
+    notes: "Interested in sports program"
+  },
+  {
+    id: "7",
+    name: "Aryan Kumar",
+    parentName: "Priya Kumar",
+    phone: "9876543212",
+    email: "priya.kumar@example.com",
+    grade: "9",
+    date: "2024-04-14T11:30:00Z",
+    status: "Contacted",
+    source: "Referral",
+    address: "15 MG Road",
+    area: "Indiranagar",
+    city: "Bangalore",
+    pincode: "560038",
+    notes: "Looking for STEM focus"
+  },
+  {
+    id: "8",
+    name: "Sara Ali",
+    parentName: "Imran Ali",
+    phone: "9876543213",
+    email: "imran.ali@example.com",
+    grade: "6",
+    date: "2024-04-13T09:30:00Z",
+    status: "Qualified",
+    source: "Exhibition",
+    address: "78 Hill Road",
+    area: "Bandra West",
+    city: "Mumbai",
+    pincode: "400050",
+    notes: "Interested in music program"
+  },
+  {
+    id: "9",
+    name: "Aditya Singh",
+    parentName: "Kavita Singh",
+    phone: "9876543214",
+    email: "kavita.singh@example.com",
+    grade: "2",
+    date: "2024-04-12T14:30:00Z",
+    status: "New",
+    source: "WalkIn",
+    address: "25 Civil Lines",
+    area: "Civil Lines",
+    city: "Delhi",
+    pincode: "110054",
+    notes: "Seeking admission next term"
+  },
+  {
+    id: "10",
+    name: "Riya Patel",
+    parentName: "Mehul Patel",
+    phone: "9876543215",
+    email: "mehul.patel@example.com",
+    grade: "7",
+    date: "2024-04-11T13:30:00Z",
+    status: "Contacted",
+    source: "Website",
+    address: "56 Ring Road",
+    area: "Satellite",
+    city: "Ahmedabad",
+    pincode: "380015",
+    notes: "International curriculum inquiry"
+  },
+  {
+    id: "11",
+    name: "Ishaan Sharma",
+    parentName: "Deepak Sharma",
+    phone: "9876543216",
+    email: "deepak.sharma@example.com",
+    grade: "5",
+    date: "2024-04-10T15:30:00Z",
+    status: "Enrolled",
+    source: "Referral",
+    address: "89 Lake Gardens",
+    area: "Lake Gardens",
+    city: "Kolkata",
+    pincode: "700045",
+    notes: "Confirmed admission"
+  },
+  {
+    id: "12",
+    name: "Zara Khan",
+    parentName: "Asif Khan",
+    phone: "9876543217",
+    email: "asif.khan@example.com",
+    grade: "3",
+    date: "2024-04-09T12:30:00Z",
+    status: "New",
+    source: "SocialMedia",
+    address: "34 Jubilee Hills",
+    area: "Jubilee Hills",
+    city: "Hyderabad",
+    pincode: "500033",
+    notes: "Sports scholarship inquiry"
+  },
+  {
+    id: "13",
+    name: "Advait Menon",
+    parentName: "Lakshmi Menon",
+    phone: "9876543218",
+    email: "lakshmi.menon@example.com",
+    grade: "10",
+    date: "2024-04-08T16:30:00Z",
+    status: "Qualified",
+    source: "Exhibition",
+    address: "12 Poes Garden",
+    area: "Poes Garden",
+    city: "Chennai",
+    pincode: "600086",
+    notes: "Science stream interest"
+  },
+  {
+    id: "14",
+    name: "Myra Kapoor",
+    parentName: "Sunita Kapoor",
+    phone: "9876543219",
+    email: "sunita.kapoor@example.com",
+    grade: "1",
+    date: "2024-04-07T10:30:00Z",
+    status: "Contacted",
+    source: "WalkIn",
+    address: "67 Model Town",
+    area: "Model Town",
+    city: "Ludhiana",
+    pincode: "141002",
+    notes: "Primary education inquiry"
+  },
+  {
+    id: "15",
+    name: "Ved Mathur",
+    parentName: "Anjali Mathur",
+    phone: "9876543220",
+    email: "anjali.mathur@example.com",
+    grade: "8",
+    date: "2024-04-06T11:30:00Z",
+    status: "New",
+    source: "Website",
+    address: "45 Scheme 54",
+    area: "Vijay Nagar",
+    city: "Indore",
+    pincode: "452010",
+    notes: "Computer science focus"
+  },
+  {
+    id: "16",
+    name: "Anaya Reddy",
+    parentName: "Kiran Reddy",
+    phone: "9876543221",
+    email: "kiran.reddy@example.com",
+    grade: "11",
+    date: "2024-04-05T14:30:00Z",
+    status: "Enrolled",
+    source: "Referral",
+    address: "23 Banjara Hills",
+    area: "Banjara Hills",
+    city: "Hyderabad",
+    pincode: "500034",
+    notes: "Commerce stream admission"
+  },
+  {
+    id: "17",
+    name: "Vihaan Joshi",
+    parentName: "Prerna Joshi",
+    phone: "9876543222",
+    email: "prerna.joshi@example.com",
+    grade: "4",
+    date: "2024-04-04T13:30:00Z",
+    status: "Qualified",
+    source: "Exhibition",
+    address: "90 Aundh",
+    area: "Aundh",
+    city: "Pune",
+    pincode: "411007",
+    notes: "Extra-curricular activities"
+  },
+  {
+    id: "18",
+    name: "Aadhya Gupta",
+    parentName: "Rajesh Gupta",
+    phone: "9876543223",
+    email: "rajesh.gupta@example.com",
+    grade: "7",
+    date: "2024-04-03T15:30:00Z",
+    status: "New",
+    source: "SocialMedia",
+    address: "78 Salt Lake",
+    area: "Salt Lake",
+    city: "Kolkata",
+    pincode: "700091",
+    notes: "Language program interest"
+  },
+  {
+    id: "19",
+    name: "Kabir Malhotra",
+    parentName: "Neeta Malhotra",
+    phone: "9876543224",
+    email: "neeta.malhotra@example.com",
+    grade: "12",
+    date: "2024-04-02T16:30:00Z",
+    status: "Contacted",
+    source: "Website",
+    address: "56 Defence Colony",
+    area: "Defence Colony",
+    city: "Delhi",
+    pincode: "110024",
+    notes: "Science stream admission"
+  },
+  {
+    id: "20",
+    name: "Kiara Mehta",
+    parentName: "Rohan Mehta",
+    phone: "9876543225",
+    email: "rohan.mehta@example.com",
+    grade: "6",
+    date: "2024-04-01T10:30:00Z",
+    status: "New",
+    source: "WalkIn",
+    address: "34 Alkapuri",
+    area: "Alkapuri",
+    city: "Vadodara",
+    pincode: "390007",
+    notes: "School infrastructure inquiry"
   }
 ];
 
@@ -117,7 +356,6 @@ const Index = () => {
   const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
   const { toast } = useToast();
 
-  // Persist leads to localStorage
   useEffect(() => {
     const savedLeads = localStorage.getItem("vidyasathi-leads");
     if (savedLeads) {
@@ -131,7 +369,6 @@ const Index = () => {
 
   const handleAddLead = (data: any) => {
     if (editingLead) {
-      // Update existing lead
       setLeads(leads.map(lead => 
         lead.id === editingLead.id ? { ...data, id: editingLead.id } : lead
       ));
@@ -141,7 +378,6 @@ const Index = () => {
       });
       setEditingLead(undefined);
     } else {
-      // Add new lead
       const newLead = {
         ...data,
         id: `lead-${Date.now()}`

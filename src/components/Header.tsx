@@ -9,19 +9,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
 
 export function Header() {
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-  
   const currentYear = new Date().getFullYear();
   const academicYear = `${currentYear}-${currentYear + 1}`;
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toLocaleString('default', { month: 'long' })
-  );
 
   return (
     <header className="border-b bg-white shadow-sm">
@@ -73,32 +64,6 @@ export function Header() {
             <div className="flex items-center space-x-2 text-muted-foreground">
               <span>Academic Year:</span>
               <span className="font-medium text-foreground">{academicYear}</span>
-            </div>
-            <div className="h-4 w-px bg-border"></div>
-            <div className="flex items-center space-x-2 text-muted-foreground">
-              <span>Current Month:</span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="font-medium text-foreground p-2 h-auto flex items-center gap-2"
-                  >
-                    {selectedMonth}
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  {months.map((month) => (
-                    <DropdownMenuItem
-                      key={month}
-                      onClick={() => setSelectedMonth(month)}
-                      className="cursor-pointer"
-                    >
-                      {month}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
           <div className="flex items-center gap-4">

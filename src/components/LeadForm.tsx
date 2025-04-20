@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -73,7 +72,7 @@ export function LeadForm({ onSubmit, onClose, initialData }: LeadFormProps) {
   };
 
   return (
-    <DialogContent className="sm:max-w-[600px]">
+    <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <div className="flex items-center justify-between">
           <DialogTitle>Add New Lead</DialogTitle>
